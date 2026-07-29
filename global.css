@@ -1,3 +1,167 @@
-@tailwind base;
-@tailwind components;
-@tailwind utilities;
+@import 'tailwindcss';
+@import 'uniwind';
+@import 'heroui-native/styles';
+
+@source './node_modules/heroui-native/lib';
+
+@layer theme {
+    /* ============================================================
+     * LIGHT THEME (Default)
+     * Brand: NHIS Connect deep teal (--primary) + mint accent
+     * (--secondary), matching the app icon/splash artwork.
+     * ============================================================ */
+    @variant light {
+        --font-normal: 'Poppins';
+        --font-medium: 'Poppins-Medium';
+        --font-semibold: 'Poppins-SemiBold';
+        --font-bold: 'Poppins-Bold';
+
+        --radius: 0.625rem;
+
+        /* Base */
+        --background: oklch(98.5% 0.001 106.4);
+        --foreground: oklch(18.9% 0.016 188.7);
+
+        /* Surface — cards, list items */
+        --surface: oklch(100% 0 0);
+        --surface-foreground: var(--foreground);
+
+        --surface-secondary: oklch(96.6% 0.003 10.3);
+        --surface-secondary-foreground: var(--foreground);
+
+        --surface-tertiary: oklch(93.9% 0.005 18.6);
+        --surface-tertiary-foreground: var(--foreground);
+
+        /* Overlay — modals, sheets */
+        --overlay: oklch(100% 0 0);
+        --overlay-foreground: var(--foreground);
+        --backdrop: oklch(0% 0 0 / 20%);
+
+        /* Muted — secondary text, timestamps, placeholders */
+        --muted: oklch(62.5% 0.03 113.5);
+
+        /* Default — neutral interactive surfaces (pills, chips) */
+        --default: oklch(94.5% 0.004 16.5);
+        --default-foreground: var(--foreground);
+
+        /* Brand — primary is the deep teal, secondary the mint accent.
+         * --accent aliases --primary so HeroUI Native's own components
+         * (Button, Switch, focus rings) pick up the brand automatically. */
+        --primary: oklch(31.9% 0.054 206.3);
+        --primary-foreground: oklch(100% 0 0);
+        --secondary: oklch(62.3% 0.108 183.6);
+        --secondary-foreground: oklch(100% 0 0);
+        --accent: var(--primary);
+        --accent-foreground: var(--primary-foreground);
+
+        /* Form fields */
+        --field-background: oklch(100% 0 0);
+        --field-foreground: var(--foreground);
+        --field-placeholder: var(--muted);
+        --field-border: oklch(89.1% 0.009 33);
+
+        /* Status */
+        --success: oklch(65% 0.16 155);
+        --success-foreground: oklch(16.5% 0.01 155);
+        --warning: oklch(75% 0.12 75);
+        --warning-foreground: oklch(16.5% 0.01 75);
+        --danger: oklch(62% 0.16 22);
+        --danger-foreground: oklch(99% 0 0);
+
+        /* Components */
+        --segment: oklch(96% 0.008 256);
+        --segment-foreground: var(--foreground);
+
+        /* Borders & lines */
+        --border: oklch(90.5% 0.008 28.9);
+        --separator: oklch(83.6% 0.013 49.5);
+        --focus: var(--primary);
+        --link: var(--primary);
+
+        /* Shadows */
+        --surface-shadow:
+                0 2px 4px 0 rgba(1, 58, 64, 0.04), 0 1px 2px 0 rgba(1, 58, 64, 0.05),
+                0 0 1px 0 rgba(1, 58, 64, 0.05);
+        --overlay-shadow:
+                0 4px 16px 0 rgba(1, 58, 64, 0.06), 0 -2px 8px 0 rgba(1, 58, 64, 0.02),
+                0 12px 24px 0 rgba(1, 58, 64, 0.04);
+        --field-shadow:
+                0 1px 3px 0 rgba(1, 58, 64, 0.04), 0 0 1px 0 rgba(1, 58, 64, 0.06);
+    }
+
+    /* ============================================================
+     * DARK THEME
+     * ============================================================ */
+    @variant dark {
+        --font-normal: 'Poppins';
+        --font-medium: 'Poppins-Medium';
+        --font-semibold: 'Poppins-SemiBold';
+        --font-bold: 'Poppins-Bold';
+
+        --radius: 0.625rem;
+
+        --background: oklch(18.9% 0.016 188.7);
+        --foreground: oklch(97.2% 0.005 183);
+
+        --surface: oklch(26.2% 0.015 171.7);
+        --surface-foreground: var(--foreground);
+
+        --surface-secondary: oklch(29.5% 0.014 164.2);
+        --surface-secondary-foreground: var(--foreground);
+
+        --surface-tertiary: oklch(32.7% 0.013 156.6);
+        --surface-tertiary-foreground: var(--foreground);
+
+        --overlay: oklch(26.2% 0.015 171.7);
+        --overlay-foreground: var(--foreground);
+        --backdrop: oklch(0% 0 0 / 20%);
+
+        --muted: oklch(55.4% 0.009 103.8);
+
+        --default: oklch(31.1% 0.014 160.4);
+        --default-foreground: var(--foreground);
+
+        --primary: oklch(64.3% 0.099 205.5);
+        --primary-foreground: oklch(22.4% 0.03 187.8);
+        --secondary: oklch(75.8% 0.131 182.9);
+        --secondary-foreground: oklch(22.4% 0.03 187.8);
+        --accent: var(--primary);
+        --accent-foreground: var(--primary-foreground);
+
+        --field-background: oklch(26.2% 0.015 171.7);
+        --field-foreground: var(--foreground);
+        --field-placeholder: var(--muted);
+        --field-border: oklch(33.5% 0.013 154.7);
+
+        --success: oklch(70% 0.14 155);
+        --success-foreground: oklch(15% 0.01 155);
+        --warning: oklch(80% 0.1 75);
+        --warning-foreground: oklch(15% 0.01 75);
+        --danger: oklch(65% 0.14 22);
+        --danger-foreground: oklch(99% 0 0);
+
+        --segment: oklch(31.9% 0.014 158.5);
+        --segment-foreground: var(--foreground);
+
+        --border: oklch(31.9% 0.014 158.5);
+        --separator: oklch(38.4% 0.012 143.4);
+        --focus: var(--primary);
+        --link: var(--primary);
+
+        /* Shadows — invisible on dark, subtle inner glow on overlays instead */
+        --surface-shadow: 0 0 0 0 transparent inset;
+        --overlay-shadow: 0 0 1px 0 rgba(150, 230, 220, 0.08) inset;
+        --field-shadow: 0 0 0 0 transparent inset;
+    }
+}
+
+@theme inline {
+    --color-primary: var(--primary);
+    --color-primary-foreground: var(--primary-foreground);
+
+    --color-secondary: var(--secondary);
+    --color-secondary-foreground: var(--secondary-foreground);
+}
+
+/* Spacing uses Tailwind's default 4px-step scale directly (gap-4, px-6, ...) —
+ * no separate spacing tokens. */
