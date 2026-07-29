@@ -3,22 +3,20 @@ import * as SplashScreen from 'expo-splash-screen';
 import { useFonts } from 'expo-font';
 import { Stack } from 'expo-router';
 import { useEffect } from 'react';
-import { ThemeProvider, useTheme } from '@/contexts/ThemeContext';
+import { GestureHandlerRootView } from 'react-native-gesture-handler';
+import { HeroUINativeProvider, ToastProvider } from 'heroui-native';
+import { ThemeProvider } from '@/contexts/ThemeContext';
 
 SplashScreen.preventAutoHideAsync();
 
 function StackNavigator() {
-  const { colors } = useTheme();
   return (
-    <Stack
-      screenOptions={{
-        headerShown: false,
-        contentStyle: { backgroundColor: colors.white },
-      }}
-    >
+    <Stack screenOptions={{ headerShown: false }}>
       <Stack.Screen name="index" />
+      <Stack.Screen name="(onboarding)" />
+      <Stack.Screen name="(landing)" />
       <Stack.Screen name="(auth)" />
-      <Stack.Screen name="(dash)" options={{ gestureEnabled: false }} />
+      <Stack.Screen name="(protected)" options={{ gestureEnabled: false }} />
     </Stack>
   );
 }
@@ -38,8 +36,14 @@ export default function Layout() {
   }, [fontsLoaded]);
 
   return (
-    <ThemeProvider>
-      <StackNavigator />
-    </ThemeProvider>
+    <GestureHandlerRootView style={{ flex: 1 }}>
+      <HeroUINativeProvider>
+        <ThemeProvider>
+          <ToastProvider>
+            <StackNavigator />
+          </ToastProvider>
+        </ThemeProvider>
+      </HeroUINativeProvider>
+    </GestureHandlerRootView>
   );
 }
