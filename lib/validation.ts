@@ -14,20 +14,32 @@ export const loginSchema = z.object({
   password: z.string().min(1, 'Password is required'),
 });
 
-export const signUpSchema = z.object({
-  email: emailSchema,
-  password: passwordSchema,
-  confirmPassword: z.string(),
-}).refine((data) => data.password === data.confirmPassword, {
-  message: 'Passwords do not match',
-  path: ['confirmPassword'],
-});
+export const signUpSchema = z
+  .object({
+    email: emailSchema,
+    password: passwordSchema,
+    confirmPassword: z.string(),
+  })
+  .refine((data) => data.password === data.confirmPassword, {
+    message: 'Passwords do not match',
+    path: ['confirmPassword'],
+  });
+
+export const registerSchema = z
+  .object({
+    name: z.string().min(1, 'Name is required'),
+    email: emailSchema,
+    password: passwordSchema,
+    confirmPassword: z.string(),
+  })
+  .refine((data) => data.password === data.confirmPassword, {
+    message: 'Passwords do not match',
+    path: ['confirmPassword'],
+  });
 
 export const otpSchema = (length: number) =>
-  z
-    .string()
-    .length(length, `Enter ${length} digits`)
-    .regex(/^\d+$/, 'Only numbers allowed');
+  z.string().length(length, `Enter ${length} digits`).regex(/^\d+$/, 'Only numbers allowed');
 
 export type LoginFormData = z.infer<typeof loginSchema>;
 export type SignUpFormData = z.infer<typeof signUpSchema>;
+export type RegisterFormData = z.infer<typeof registerSchema>;
