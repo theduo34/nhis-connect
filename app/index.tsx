@@ -1,30 +1,45 @@
-import React, { useState, useEffect } from "react";
-import { useRouter } from 'expo-router';
-import { View, ActivityIndicator } from "react-native";
-import GetStarted from "./(auth)/get-started";
+import { View } from 'react-native';
+import { Redirect } from 'expo-router';
+import { Image } from 'expo-image';
+import { Text } from '@/components/common/Text';
+import { useAuthStore } from '@/store/auth';
+import { useOnboardingStore } from '@/store/onboarding';
+import { useStoreHydrated } from '@/hooks/useStoreHydrated';
 
-const Page = () => {
-  const [isSignedIn, setIsSignedIn] = useState(true);
-  const router = useRouter();
+export default function Index() {
+  const authHydrated = useStoreHydrated(useAuthStore);
+  const onboardingHydrated = useStoreHydrated(useOnboardingStore);
+  const isAuthenticated = useAuthStore((s) => s.isAuthenticated);
+  const isSessionChecked = useAuthStore((s) => s.isSessionChecked);
+  const role = useAuthStore((s) => s.user?.role);
+  const hasSeenOnboarding = useOnboardingStore((s) => s.hasSeenOnboarding);
 
-  useEffect(() => {
-    if (isSignedIn) {
-      const timeout = setTimeout(() => {
-        router.replace("/(dash)/(tabs)/home");
-      }, 100);
-      return () => clearTimeout(timeout);
-    }
-  }, [isSignedIn]);
+  const ready = authHydrated && onboardingHydrated && isSessionChecked;
 
-  if (isSignedIn) {
+  if (!ready) {
     return (
-      <View style={{ flex: 1, justifyContent: 'center', alignItems: 'center', backgroundColor: 'white' }}>
-        <ActivityIndicator size="large" color="#5547BA" />
+      <View className="bg-background flex-1 items-center justify-center gap-3">
+        <Image
+          source={require('../assets/images/icon.png')}
+          style={{ width: 72, height: 72, borderRadius: 16 }}
+          contentFit="contain"
+        />
+        <Text className="text-foreground font-bold">NHIS Connect</Text>
       </View>
     );
   }
 
-  return <GetStarted />;
-};
+  if (isAuthenticated) {
+    return (
+      <Redirect
+        href={
+          role === 'admin'
+            ? '/(protected)/(admin)/(tabs)/home'
+            : '/(protected)/(subscriber)/(tabs)/home'
+        }
+      />
+    );
+  }
 
-export default Page;
+  return <Redirect href={hasSeenOnboarding ? '/(landing)/welcome' : '/(onboarding)/carousel'} />;
+}
