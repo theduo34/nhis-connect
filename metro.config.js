@@ -2,7 +2,7 @@
 const { getDefaultConfig } = require('expo/metro-config');
 const path = require('path');
 
-const { withNativeWind } = require('nativewind/metro');
+const { withUniwindConfig } = require('uniwind/metro');
 
 /** @type {import('expo/metro-config').MetroConfig} */
 
@@ -13,4 +13,7 @@ config.resolver.alias = {
   '@': path.resolve(__dirname, '.'),
 };
 
-module.exports = withNativeWind(config, { input: './global.css' });
+module.exports = withUniwindConfig(config, {
+  cssEntryFile: './global.css',
+  dtsFile: './uniwind-env.d.ts',
+});
