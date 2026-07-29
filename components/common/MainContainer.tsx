@@ -1,47 +1,58 @@
-import { Platform, ScrollView, StyleSheet, Text } from "react-native";
-import React, { ReactNode } from "react";
-import { SafeAreaView } from "react-native-safe-area-context";
-import { useTheme } from "@/contexts/ThemeContext";
-import { MainContainerProps } from "@/interfaces/constants/maincontainer-props";
+import { KeyboardAvoidingView, Platform, ScrollView, StyleSheet, Text } from 'react-native';
+import React, { ReactNode } from 'react';
+import { SafeAreaView } from 'react-native-safe-area-context';
+import { cn } from 'heroui-native';
+import { MainContainerProps } from '@/interfaces/constants/maincontainer-props';
+
+/** Standard horizontal margin for every screen — change once, applies everywhere. */
+const SCREEN_PADDING = 'px-5';
 
 const MainContainer: React.FC<MainContainerProps> = ({
-    children,
-    style,
-    contentContainerStyle
+  children,
+  style,
+  contentContainerStyle,
+  className,
+  contentContainerClassName,
 }) => {
-    const { colors } = useTheme();
-    const renderSafeChildren = (children: ReactNode) => {
-        if (typeof children === 'string') {
-            console.warn('MainContainer: String passed as child. Wrapping in Text component.');
-            return <Text>{children}</Text>;
-        }
-        return children;
-    };
+  const renderSafeChildren = (children: ReactNode) => {
+    if (typeof children === 'string') {
+      console.warn('MainContainer: String passed as child. Wrapping in Text component.');
+      return <Text>{children}</Text>;
+    }
+    return children;
+  };
 
-    return (
-        <SafeAreaView style={[styles.container, { backgroundColor: colors.white }, style]}>
-            <ScrollView
-                contentContainerStyle={[styles.scrollContent, contentContainerStyle]}
-                keyboardShouldPersistTaps="handled"
-                showsVerticalScrollIndicator={false}
-            >
-                {renderSafeChildren(children)}
-            </ScrollView>
-        </SafeAreaView>
-    );
+  return (
+    <SafeAreaView className={className ?? 'bg-background flex-1'} style={[styles.container, style]}>
+      <KeyboardAvoidingView
+        style={styles.flex}
+        behavior={Platform.OS === 'ios' ? 'padding' : undefined}>
+        <ScrollView
+          contentContainerClassName={cn(SCREEN_PADDING, contentContainerClassName) as string}
+          contentContainerStyle={[styles.scrollContent, contentContainerStyle]}
+          keyboardShouldPersistTaps="handled"
+          automaticallyAdjustKeyboardInsets
+          showsVerticalScrollIndicator={false}>
+          {renderSafeChildren(children)}
+        </ScrollView>
+      </KeyboardAvoidingView>
+    </SafeAreaView>
+  );
 };
 
 const styles = StyleSheet.create({
-    container: {
-        flex: 1,
-        paddingHorizontal: 10,
-        paddingTop: Platform.OS === 'ios' ? 0 : 10,
-    },
-    scrollContent: {
-        flexGrow: 1,
-        paddingVertical: Platform.OS === 'ios' ? 0 : 20,
-        paddingBottom: 50,
-    },
+  container: {
+    flex: 1,
+    paddingTop: Platform.OS === 'ios' ? 0 : 10,
+  },
+  flex: {
+    flex: 1,
+  },
+  scrollContent: {
+    flexGrow: 1,
+    paddingVertical: Platform.OS === 'ios' ? 0 : 20,
+    paddingBottom: 50,
+  },
 });
 
 export default MainContainer;
