@@ -1,6 +1,6 @@
 import { supabase } from '@/config/supabase';
 
-export type MembershipStatus = 'active' | 'expiring_soon' | 'expired';
+export type MembershipStatus = 'active' | 'expiring_soon' | 'expired' | 'pending';
 
 export interface Membership {
   status: MembershipStatus;
