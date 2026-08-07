@@ -17,6 +17,13 @@ export default function StatusBadge({ status }: { status: MembershipStatus }) {
       </View>
     );
   }
+  if (status === 'pending') {
+    return (
+      <View className="bg-accent-soft self-start rounded-full px-3 py-1">
+        <Text className="text-accent-soft-foreground text-xs font-semibold">Pending review</Text>
+      </View>
+    );
+  }
   return (
     <View className="bg-danger-soft self-start rounded-full px-3 py-1">
       <Text className="text-danger-soft-foreground text-xs font-semibold">Expired</Text>
