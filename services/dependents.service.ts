@@ -1,17 +1,20 @@
 import { supabase } from '@/config/supabase';
 import type { AuthResult } from '@/interfaces/auth';
+import type { MembershipStatus } from '@/services/membership.service';
 
 export interface Dependent {
   id: string;
   fullName: string;
   relationship: string;
   nhisNumber: string | null;
+  membershipStatus: MembershipStatus;
+  membershipExpiry: string | null;
 }
 
 export async function fetchDependents(userId: string): Promise<Dependent[]> {
   const { data, error } = await supabase
     .from('dependents')
-    .select('id, full_name, relationship, nhis_number')
+    .select('id, full_name, relationship, nhis_number, membership_status, membership_expiry')
     .eq('user_id', userId)
     .order('created_at', { ascending: true });
   if (error || !data) return [];
@@ -20,6 +23,8 @@ export async function fetchDependents(userId: string): Promise<Dependent[]> {
     fullName: row.full_name,
     relationship: row.relationship,
     nhisNumber: row.nhis_number,
+    membershipStatus: row.membership_status as MembershipStatus,
+    membershipExpiry: row.membership_expiry,
   }));
 }
 
