@@ -1,7 +1,8 @@
 import { useEffect, useState } from 'react';
 import { View } from 'react-native';
+import { router } from 'expo-router';
 import { Ionicons } from '@expo/vector-icons';
-import { useThemeColor } from 'heroui-native';
+import { Button, useThemeColor } from 'heroui-native';
 import { Text } from '@/components/common/Text';
 import CollapsibleScreen from '@/components/navigation/CollapsibleScreen';
 import MembershipCard from '@/components/home/MembershipCard';
@@ -44,9 +45,11 @@ export default function SubscriberCard() {
     fetchDependents(user.id).then(setDependents);
   }, [user]);
 
+  const canRenew = membership && membership.status !== 'active' && membership.status !== 'pending';
+
   return (
     <CollapsibleScreen title="Card" rightAction={<AddDependentButton />}>
-      <MembershipCard name={user?.name ?? ''} nhisNumber={nhisNumber} />
+      <MembershipCard name={user?.name ?? ''} nhisNumber={nhisNumber} status={membership?.status} />
 
       <View className="mt-5 gap-3 rounded-2xl bg-white p-5" style={cardShadow}>
         <View className="flex-row items-center justify-between">
@@ -54,10 +57,17 @@ export default function SubscriberCard() {
           {membership && <StatusBadge status={membership.status} />}
         </View>
         <Text className="text-muted text-sm">
-          {membership?.expiry
-            ? `Valid until ${formatExpiry(membership.expiry)}`
-            : 'No expiry date on file yet'}
+          {membership?.status === 'pending'
+            ? 'Your renewal request is being reviewed.'
+            : membership?.expiry
+              ? `Valid until ${formatExpiry(membership.expiry)}`
+              : 'No expiry date on file yet'}
         </Text>
+        {canRenew && (
+          <Button size="sm" onPress={() => router.push('/(protected)/renew-membership')}>
+            Renew now
+          </Button>
+        )}
       </View>
 
       <View className="mt-6">
