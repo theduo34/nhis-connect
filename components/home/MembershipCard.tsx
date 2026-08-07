@@ -3,10 +3,13 @@ import { router } from 'expo-router';
 import { LinearGradient } from 'expo-linear-gradient';
 import { Ionicons } from '@expo/vector-icons';
 import { Text } from '@/components/common/Text';
+import type { MembershipStatus } from '@/services/membership.service';
 
 interface MembershipCardProps {
   name: string;
   nhisNumber?: string | null;
+  /** Omit while loading — the card falls back to its default (Card tab) tap target. */
+  status?: MembershipStatus | null;
 }
 
 function formatCardNumber(value: string): string {
@@ -15,10 +18,28 @@ function formatCardNumber(value: string): string {
   return digits.match(/.{1,4}/g)?.join('  ') ?? value;
 }
 
-export default function MembershipCard({ name, nhisNumber }: MembershipCardProps) {
+/** Non-null only when the card should surface a renew CTA instead of the plain shield icon. */
+function getActionState(status?: MembershipStatus | null): { label: string; tint: string } | null {
+  if (status === 'expiring_soon') return { label: 'Renew soon', tint: 'rgba(245, 166, 35, 0.28)' };
+  if (status === 'expired') return { label: 'Renew now', tint: 'rgba(240, 68, 56, 0.28)' };
+  if (status === 'pending') return { label: 'Renewal pending', tint: 'rgba(255, 255, 255, 0.16)' };
+  return null;
+}
+
+export default function MembershipCard({ name, nhisNumber, status }: MembershipCardProps) {
+  const actionState = getActionState(status);
+
+  const onPress = () => {
+    if (actionState) {
+      router.push('/(protected)/renew-membership');
+      return;
+    }
+    router.push('/(protected)/(subscriber)/(tabs)/card');
+  };
+
   return (
     <Pressable
-      onPress={() => router.push('/(protected)/(subscriber)/(tabs)/card')}
+      onPress={onPress}
       className="active:opacity-90"
       style={{
         shadowColor: '#013A40',
@@ -60,7 +81,18 @@ export default function MembershipCard({ name, nhisNumber }: MembershipCardProps
         <View className="flex-1 justify-between">
           <View className="flex-row items-center justify-between">
             <Text className="text-xs font-semibold uppercase text-white">NHIS Connect</Text>
-            <Ionicons name="shield-checkmark" size={22} color="#ffffff" />
+            {actionState ? (
+              <View
+                className="flex-row items-center gap-1 rounded-full px-2.5 py-1"
+                style={{ backgroundColor: actionState.tint }}>
+                <Ionicons name="alert-circle" size={13} color="#ffffff" />
+                <Text className="text-[10px] font-semibold uppercase text-white">
+                  {actionState.label}
+                </Text>
+              </View>
+            ) : (
+              <Ionicons name="shield-checkmark" size={22} color="#ffffff" />
+            )}
           </View>
 
           <View>
