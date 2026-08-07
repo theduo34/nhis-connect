@@ -12,21 +12,46 @@ export interface Appointment {
   status: AppointmentStatus;
 }
 
-export async function fetchAppointments(userId: string): Promise<Appointment[]> {
-  const { data, error } = await supabase
-    .from('appointments')
-    .select('id, facility_name, facility_address, appointment_date, appointment_time, status')
-    .eq('user_id', userId)
-    .order('appointment_date', { ascending: true });
-  if (error || !data) return [];
-  return data.map((row) => ({
+const APPOINTMENT_COLUMNS =
+  'id, facility_name, facility_address, appointment_date, appointment_time, status';
+
+function toAppointment(row: {
+  id: string;
+  facility_name: string;
+  facility_address: string | null;
+  appointment_date: string;
+  appointment_time: string;
+  status: string;
+}): Appointment {
+  return {
     id: row.id,
     facilityName: row.facility_name,
     facilityAddress: row.facility_address,
     date: row.appointment_date,
     time: row.appointment_time,
     status: row.status as AppointmentStatus,
-  }));
+  };
+}
+
+export async function fetchAppointments(userId: string): Promise<Appointment[]> {
+  const { data, error } = await supabase
+    .from('appointments')
+    .select(APPOINTMENT_COLUMNS)
+    .eq('user_id', userId)
+    .order('appointment_date', { ascending: true });
+  if (error || !data) return [];
+  return data.map(toAppointment);
+}
+
+/** Admin home feed: most recently booked appointments across all subscribers. */
+export async function fetchRecentAppointments(limit = 5): Promise<Appointment[]> {
+  const { data, error } = await supabase
+    .from('appointments')
+    .select(APPOINTMENT_COLUMNS)
+    .order('created_at', { ascending: false })
+    .limit(limit);
+  if (error || !data) return [];
+  return data.map(toAppointment);
 }
 
 export interface NewAppointment {
